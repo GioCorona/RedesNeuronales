@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Red neuronal</title>
+	<style type="text/css">
+		#sitio {
+			padding: 5rem;
+			font-size: 5rem;
+			margin-left: 15rem;
+		}		
+	</style>
+</head>	
+<body>
+	<input data-jscolor="{value:'#FFFFFF'}", onInput="update(this.jscolor)">
+	<div id="sitio">
+		Redes neuronales
+	</div>
+
+	<script src="jscolor.min.js"></script>
+	<script src="brain.js"></script>
+
+	<script type="text/javascript">
+		//Inicializar red neuronal
+		var network = new brain.NeuralNetwork();
+
+		network.train([
+				//fondo negro
+				{input:{rojo:0, verde:0,azul:0}, output:{color:1}},
+				//fondo blanco
+				{input:{rojo:1, verde:1,azul:1}, output:{color:0}},
+                //excepciones verde
+                {input:{rojo:0, verde:1,azul:0}, output:{color:0}}
+
+		]);
+
+		function update(color) {
+
+			var rgb = [color.channels.r, color.channels.g, color.channels.b];
+			console.log(rgb);
+
+			var div = document.getElementById("sitio");
+			div.style.background = color.toHEXString(); 
+
+			var entrada = {
+				rojo: rgb[0]/255,
+				verde: rgb[1]/255,
+				azul: rgb[2]/255
+			};
+
+			//Obtener la prediccion de la red
+			var resultado = network.run(entrada);
+			console.log(resultado);
+
+			//Si resultado > .5, se considera color de texto blanco
+			if (resultado.color > .6) {
+				div.style.color = "white";
+			}  else {
+				div.style.color = "black";
+			}
+		}
+	</script>
+</body>
+</html>
